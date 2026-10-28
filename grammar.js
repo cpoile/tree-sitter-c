@@ -36,6 +36,9 @@ module.exports = grammar({
   name: 'c',
 
   conflicts: $ => [
+    [$.compound_statement, $.initializer_list],
+    [$.comma_expression, $.initializer_pair],
+    [$.comma_expression, $.initializer_list],
     [$.type_specifier, $._declarator],
     [$.type_specifier, $._declarator, $.macro_type_specifier],
     [$.type_specifier, $.expression],
@@ -791,6 +794,7 @@ module.exports = grammar({
       $.labeled_statement,
       $.compound_statement,
       $.expression_statement,
+      $.macro_statement,
       $.if_statement,
       $.switch_statement,
       $.do_statement,
@@ -831,6 +835,11 @@ module.exports = grammar({
     _top_level_expression_statement: $ => seq(
       optional($._expression_not_binary),
       ';',
+    ),
+
+    macro_statement: $ => seq(
+      field('macro', $.call_expression),
+      field('body', $.compound_statement),
     ),
 
     expression_statement: $ => seq(
@@ -1196,8 +1205,8 @@ module.exports = grammar({
 
     extension_expression: $ => seq('__extension__', $.expression),
 
-    // The compound_statement is added to parse macros taking statements as arguments, e.g. MYFORLOOP(1, 10, i, { foo(i); bar(i); })
-    argument_list: $ => seq('(', commaSep(choice($.expression, $.compound_statement)), ')'),
+    // Macros can take statement blocks or untyped initializer lists as arguments.
+    argument_list: $ => seq('(', commaSep(choice($.expression, $.compound_statement, $.initializer_list)), ')'),
 
     field_expression: $ => seq(
       prec(PREC.FIELD, seq(

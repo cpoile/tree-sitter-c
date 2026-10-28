@@ -1,0 +1,430 @@
+================================================================================
+Macro initializer argument
+================================================================================
+
+void draw(void) {
+  configure({.fontSize = 14, .color = {240, 242, 246, 255}});
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (initializer_list
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (number_literal))
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (initializer_list
+                  (number_literal)
+                  (number_literal)
+                  (number_literal)
+                  (number_literal))))))))))
+
+================================================================================
+Macro block preserves following function
+================================================================================
+
+void hud_draw(void) {
+  ui_element({.id = ui_id("HudControls"),
+              .layout = {.child_gap = 4},
+              .corner_radius = ui_corner_radius(6)}) {
+    hud_text("Controls");
+#if GAME_DEV_TOOLS
+    hud_text("F1 editor");
+#endif
+  }
+}
+
+void app_update(void) {
+  update();
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (macro_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (initializer_list
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal
+                      (string_content)))))
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (initializer_list
+                  (initializer_pair
+                    (field_designator
+                      (field_identifier))
+                    (number_literal))))
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (number_literal)))))))
+        (compound_statement
+          (expression_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal
+                  (string_content)))))
+          (preproc_if
+            (identifier)
+            (expression_statement
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal
+                    (string_content))))))))))
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list))))))
+
+================================================================================
+Nested macro blocks and control flow
+================================================================================
+
+void draw(void) {
+  if (visible)
+    ui_element({.id = 1}) {
+      ui_element({.id = 2}) {
+        draw_text();
+      }
+    }
+  else {
+    hide();
+  }
+  scope(resource) {
+    use(resource);
+  }
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (if_statement
+        (parenthesized_expression
+          (identifier))
+        (macro_statement
+          (call_expression
+            (identifier)
+            (argument_list
+              (initializer_list
+                (initializer_pair
+                  (field_designator
+                    (field_identifier))
+                  (number_literal)))))
+          (compound_statement
+            (macro_statement
+              (call_expression
+                (identifier)
+                (argument_list
+                  (initializer_list
+                    (initializer_pair
+                      (field_designator
+                        (field_identifier))
+                      (number_literal)))))
+              (compound_statement
+                (expression_statement
+                  (call_expression
+                    (identifier)
+                    (argument_list)))))))
+        (else_clause
+          (compound_statement
+            (expression_statement
+              (call_expression
+                (identifier)
+                (argument_list))))))
+      (macro_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))
+        (compound_statement
+          (expression_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (identifier)))))))))
+
+================================================================================
+Empty macro initializer arguments
+================================================================================
+
+void draw(void) {
+  configure({});
+  configure({1, 2, 3}, {.value = 4});
+  ui_element({}) {}
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (compound_statement))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (initializer_list
+              (number_literal)
+              (number_literal)
+              (number_literal))
+            (initializer_list
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (number_literal))))))
+      (macro_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (compound_statement)))
+        (compound_statement)))))
+
+================================================================================
+Ordinary C declarations calls and statement arguments
+================================================================================
+
+int add(int a, int b) {
+  return a + b;
+}
+
+void draw(void) {
+  int result = add(1, 2);
+  struct Config config = {.value = 1};
+  configure((struct Config){.value = result});
+  WITH_BODY(resource, { use(resource); });
+  { independent_block(); }
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type)
+          (identifier))
+        (parameter_declaration
+          (primitive_type)
+          (identifier))))
+    (compound_statement
+      (return_statement
+        (binary_expression
+          (identifier)
+          (identifier)))))
+  (function_definition
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (primitive_type))))
+    (compound_statement
+      (declaration
+        (primitive_type)
+        (init_declarator
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (number_literal)
+              (number_literal)))))
+      (declaration
+        (struct_specifier
+          (type_identifier))
+        (init_declarator
+          (identifier)
+          (initializer_list
+            (initializer_pair
+              (field_designator
+                (field_identifier))
+              (number_literal)))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (compound_literal_expression
+              (type_descriptor
+                (struct_specifier
+                  (type_identifier)))
+              (initializer_list
+                (initializer_pair
+                  (field_designator
+                    (field_identifier))
+                  (identifier)))))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)
+            (compound_statement
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (identifier))))))))
+      (compound_statement
+        (expression_statement
+          (call_expression
+            (identifier)
+            (argument_list)))))))
+
+================================================================================
+Macro blocks with storage classes and pointer parameters
+================================================================================
+
+static void hud_draw(const TouchControls *touch) {
+  if (touch->last_active)
+    return;
+  ui_element({.id = ui_id("HudControls"),
+              .floating = {.offset = {16.0f, -16.0f}},
+              .background_color = panel}) {
+    hud_text(ui_string("Controls"), 14, ink);
+  }
+}
+
+extern void app_update_and_render(AppMemory *memory) {
+  tick(memory);
+}
+
+--------------------------------------------------------------------------------
+
+(translation_unit
+  (function_definition
+    (storage_class_specifier)
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (type_qualifier)
+          (type_identifier)
+          (pointer_declarator
+            (identifier)))))
+    (compound_statement
+      (if_statement
+        (parenthesized_expression
+          (field_expression
+            (identifier)
+            (field_identifier)))
+        (return_statement))
+      (macro_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (initializer_list
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal
+                      (string_content)))))
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (initializer_list
+                  (initializer_pair
+                    (field_designator
+                      (field_identifier))
+                    (initializer_list
+                      (number_literal)
+                      (number_literal)))))
+              (initializer_pair
+                (field_designator
+                  (field_identifier))
+                (identifier)))))
+        (compound_statement
+          (expression_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal
+                      (string_content))))
+                (number_literal)
+                (identifier))))))))
+  (function_definition
+    (storage_class_specifier)
+    (primitive_type)
+    (function_declarator
+      (identifier)
+      (parameter_list
+        (parameter_declaration
+          (type_identifier)
+          (pointer_declarator
+            (identifier)))))
+    (compound_statement
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))))))

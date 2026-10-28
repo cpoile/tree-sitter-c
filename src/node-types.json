@@ -274,6 +274,10 @@
         "named": true
       },
       {
+        "type": "macro_statement",
+        "named": true
+      },
+      {
         "type": "return_statement",
         "named": true
       },
@@ -493,6 +497,10 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "initializer_list",
           "named": true
         },
         {
@@ -977,6 +985,10 @@
         },
         {
           "type": "labeled_statement",
+          "named": true
+        },
+        {
+          "type": "macro_statement",
           "named": true
         },
         {
@@ -2320,6 +2332,32 @@
         "types": [
           {
             "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "macro_statement",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "compound_statement",
+            "named": true
+          }
+        ]
+      },
+      "macro": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "call_expression",
             "named": true
           }
         ]

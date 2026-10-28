@@ -5859,6 +5859,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "macro_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "if_statement"
         },
         {
@@ -6017,6 +6021,27 @@
         {
           "type": "STRING",
           "value": ";"
+        }
+      ]
+    },
+    "macro_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "macro",
+          "content": {
+            "type": "SYMBOL",
+            "name": "call_expression"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "compound_statement"
+          }
         }
       ]
     },
@@ -8488,6 +8513,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "compound_statement"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "initializer_list"
                     }
                   ]
                 },
@@ -8510,6 +8539,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "compound_statement"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "initializer_list"
                           }
                         ]
                       }
@@ -9645,6 +9678,18 @@
     }
   ],
   "conflicts": [
+    [
+      "compound_statement",
+      "initializer_list"
+    ],
+    [
+      "comma_expression",
+      "initializer_pair"
+    ],
+    [
+      "comma_expression",
+      "initializer_list"
+    ],
     [
       "type_specifier",
       "_declarator"
